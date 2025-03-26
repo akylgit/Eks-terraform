@@ -1,0 +1,53 @@
+name: Terraform EKS Setup
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code from Git
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Install Terraform
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: "latest" # You can specify a version here if necessary
+
+      # Verify Terraform version
+      - name: Terraform version
+        run: terraform --version
+
+      # Initialize Terraform
+      - name: Terraform init
+        run: |
+          cd Eks-terraform
+          terraform init
+
+      # Validate Terraform files
+      - name: Terraform validate
+        run: |
+          cd Eks-terraform
+          terraform validate
+
+      # Run Terraform plan
+      - name: Terraform plan
+        run: |
+          cd Eks-terraform
+          terraform plan
+
+      # Apply or Destroy Terraform plan
+      - name: Terraform apply/destroy
+        run: |
+          cd Eks-terraform
+          terraform ${{ github.event.inputs.Action }} --auto-approve
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
