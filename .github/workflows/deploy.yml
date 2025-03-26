@@ -18,35 +18,27 @@ jobs:
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: "latest" # You can specify a version here if necessary
+          terraform_version: "latest"
 
       # Verify Terraform version
       - name: Terraform version
         run: terraform --version
 
-      # Initialize Terraform
+      # Initialize Terraform (no need to cd as we are already in Eks-terraform)
       - name: Terraform init
-        run: |
-          cd Eks-terraform
-          terraform init
+        run: terraform init
 
       # Validate Terraform files
       - name: Terraform validate
-        run: |
-          cd Eks-terraform
-          terraform validate
+        run: terraform validate
 
       # Run Terraform plan
       - name: Terraform plan
-        run: |
-          cd Eks-terraform
-          terraform plan
+        run: terraform plan
 
       # Apply or Destroy Terraform plan
       - name: Terraform apply/destroy
-        run: |
-          cd Eks-terraform
-          terraform ${{ github.event.inputs.Action }} --auto-approve
+        run: terraform ${{ github.event.inputs.Action }} --auto-approve
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
